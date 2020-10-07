@@ -56,6 +56,7 @@ class CPU:
             time.sleep(self.clock)
         elif (op == 'WRITE'):
             self.cache.setData(tinst[1], tinst[2])
-            self.bus.write(tinst[1], tinst[2])
+            self.bus.write(tinst[1], tinst[2]) # no necesariamente siempre ver el moesi
         else:
             print()
+            # 
