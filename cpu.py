@@ -49,14 +49,14 @@ class CPU:
 
     def compute(self):
         self.genInst()
-        print(self.inst)
         tinst = self.inst[4:].split(' ')
         op = tinst[0]
         if (op == 'CALC'):
             time.sleep(self.clock)
         elif (op == 'WRITE'):
+            # print('write')
             self.cache.setData(tinst[1], tinst[2])
             self.bus.write(tinst[1], tinst[2]) # no necesariamente siempre ver el moesi
         else:
-            print()
+            print('read')
             # 
