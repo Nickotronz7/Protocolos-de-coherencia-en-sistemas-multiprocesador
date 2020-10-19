@@ -3,7 +3,7 @@ class CACHE_BLOCK:
         self.id = idInit
         self.coer = 'I'
         self.dir = ''
-        self.data = ''
+        self.data = '0000'
 
     def getId(self):
         return self.id

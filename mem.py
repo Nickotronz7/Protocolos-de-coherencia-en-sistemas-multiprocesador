@@ -27,6 +27,3 @@ class MEMORY:
 
     def viewData(self):
         print(self.data)
-
-    def updateCache(self):  # maso
-        print("updateando caches")

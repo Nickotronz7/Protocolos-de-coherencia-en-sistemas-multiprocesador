@@ -49,6 +49,21 @@ class CPU:
 
     def compute(self):
         self.genInst()
+        print(self.inst)
+        tinst = self.inst[4:].split(' ')
+        op = tinst[0]
+        if (op == 'CALC'):
+            time.sleep(self.clock)
+        else:
+            ledir = tinst[1]
+            if (op == 'WRITE'):
+                data = tinst[2]
+                self.controller.write(ledir, data)
+            else:
+                self.controller.read(ledir)
+
+    def manualCompute(self, manual_inst):
+        self.inst = manual_inst
         tinst = self.inst[4:].split(' ')
         print(tinst)
         op = tinst[0]
@@ -58,6 +73,6 @@ class CPU:
             ledir = tinst[1]
             if (op == 'WRITE'):
                 data = tinst[2]
-                print(self.controller.write(ledir, data))
+                self.controller.write(ledir, data)
             else:
-                print(self.controller.read(ledir))
+                self.controller.read(ledir)

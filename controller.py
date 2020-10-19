@@ -16,13 +16,14 @@ class CONTROLLER:
         else:  # MISS
             newEC = self.cache.get_EC(ledir)
             if (newEC == 'I' or newEC == 'S'):
-                self.cache.setData(ledir, data)
+                self.cache.justSetData(ledir, data)
                 self.invalidate(ledir)
                 self.cache.set_EC(ledir, 'M')
                 return data
 
             else:  # verificar todo los estados
                 self.bus.WB(ledir, self.cache.getDataWB(ledir))
+                self.cache.justSetData(ledir, data)
                 self.invalidate(ledir)
                 self.cache.set_EC(ledir, 'M')
                 return data
@@ -51,13 +52,13 @@ class CONTROLLER:
         ec = cache_resp[0]
         if (ec != 'ReadMiss'):  # HIT
             if (ec == 'I'):
-                resp = self.bus.readMiss_Alert(ledir, self) # [dato, ec]
+                resp = self.bus.readMiss_Alert(ledir) # [dato, ec]
                 self.wirte_EC(ledir, resp[0], resp[1])
                 return resp[0]
             else:
                 return cache_resp[1]
         else:
-            resp = self.bus.readMiss_Alert(ledir, self) # [dato, ec]
+            resp = self.bus.readMiss_Alert(ledir) # [dato, ec]
             self.wirte_EC(ledir, resp[0], resp[1])
             return resp[0]
 
