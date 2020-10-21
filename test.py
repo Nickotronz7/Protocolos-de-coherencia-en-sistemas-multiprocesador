@@ -3,6 +3,7 @@ from cache import CACHE
 from controller import CONTROLLER
 from bus import BUS
 from mem import MEMORY
+import time
 
 clock = 1
 
@@ -27,25 +28,51 @@ p2 = CPU(2, cont2, clock)
 p3 = CPU(3, cont3, clock)
 p4 = CPU(4, cont4, clock)
 
-p1.compute()
-p2.compute()
-p3.compute()
-p4.compute()
 
-p2.manualCompute('P2: WRITE 1100 FFFF')
-p2.manualCompute('P2: WRITE 1100 FFF2')  # write no func
+def foo():
+    time.sleep(2)
+    print('fin de foo')
 
-print('#################################')
-p1.controller.cache.printCache()
-print('#################################')
-p2.controller.cache.printCache()
-print('#################################')
-p3.controller.cache.printCache()
-print('#################################')
-p4.controller.cache.printCache()
-print('#################################')
+# del p1
 
+# p2.manualCompute('P2: WRITE 1100 FFFF')
+# # p2.controller.cache.printCache()
+# p2.manualCompute('P2: READ 1100')
 
-print(mainMem.data)
+# print(p2.controller.cache.getData('1100'))
 
+# p1.compute()
+# p2.compute()
+# p3.compute()
+# p4.compute()
+# p2.manualCompute('P2: WRITE 1100 FFF2')  # write no func
+# print('#################################')
+# p1.controller.cache.printCache()
+# print('#################################')
+# p2.controller.cache.printCache()
+# print('#################################')
+# p3.controller.cache.printCache()
+# print('#################################')
+# p4.controller.cache.printCache()
+# print('#################################')
+# print(mainMem.data)
 # P1: WRITE 1111 FFFF
+
+# def foo(num):
+#     if (num):
+#         print(num)
+
+# foo(0)
+# foo(1)
+# foo(2)
+
+import threading
+
+x = threading.Thread(target=foo)
+x.start()
+print(x.is_alive())
+x.join()
+if(not x.is_alive()):
+    print(x.is_alive())
+    x.start()
+print('FIN')

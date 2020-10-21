@@ -25,11 +25,12 @@ class BUS:
             return [getted_Data['E'][0], 'S']
 
         elif (getted_Data['O'] != []):
-            return [getted_Data['E'][0], 'S']
+            self.WB(ledir, getted_Data['O'][0])
+            return [getted_Data['O'][0], 'S']
 
         elif (getted_Data['M'] != []):
             getted_Data['M'][1].update_EC(ledir, 'O')
-            return [getted_Data['E'][0], 'S']
+            return [getted_Data['M'][0], 'S']
 
         else:
             return [self.read(ledir), 'E']

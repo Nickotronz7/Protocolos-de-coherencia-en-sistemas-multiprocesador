@@ -25,5 +25,5 @@ class MEMORY:
         self.wall()
         return self.data[block][cell]
 
-    def viewData(self):
-        print(self.data)
+    def getData(self):
+        return self.data

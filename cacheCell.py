@@ -18,7 +18,7 @@ class CACHE_BLOCK:
         self.coer = newCoer
     
     def getDir(self):
-        return self.coer
+        return self.dir
     
     def setDir(self, newDir):
         self.dir = newDir

@@ -18,7 +18,8 @@ class CACHE:
         # block = int(ledir[1])  # 1_1_11
         for cSet in range(0, 2):
             for block in range(0, 2):
-                print(cSet, block, self.cdata[cSet][block].getData(), self.cdata[cSet][block].getCoer())
+                print(cSet, block, self.cdata[cSet][block].getData(
+                ), self.cdata[cSet][block].getCoer())
 
     def getData(self, ledir):
         cSet = int(ledir[-1])  # 111_1_
@@ -58,3 +59,8 @@ class CACHE:
         cSet = int(ledir[-1])  # 111_1_
         block = int(ledir[1])  # 1_1_11
         return self.cdata[cSet][block].getCoer()
+    
+    def get_ledir(self, ledir):
+        cSet = int(ledir[-1])  # 111_1_
+        block = int(ledir[1])  # 1_1_11
+        return self.cdata[cSet][block].getDir()

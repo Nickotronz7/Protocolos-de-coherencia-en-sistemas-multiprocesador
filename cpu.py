@@ -1,15 +1,21 @@
 import numpy as np
 import random
 import time
+import threading
 
 
 class CPU:
 
-    def __init__(self, idInit, initController, initClock):
+    def __init__(self, idInit, initController, initClock, gui):
         self.id = idInit
         self.controller = initController
         self.clock = initClock
         self.inst = ''
+        self.continuos_Flag = False
+        self.gui = gui
+
+    def set_continuos_Flag(self, newFlag):
+        self.continuos_Flag = newFlag
 
     def genMemDir(self):
         memDir = np.random.poisson(lam=9)
@@ -49,7 +55,7 @@ class CPU:
 
     def compute(self):
         self.genInst()
-        print(self.inst)
+        threading.Thread(target=self.gui.drawInst(self.id, self.inst)).start()
         tinst = self.inst[4:].split(' ')
         op = tinst[0]
         if (op == 'CALC'):
@@ -58,14 +64,47 @@ class CPU:
             ledir = tinst[1]
             if (op == 'WRITE'):
                 data = tinst[2]
-                self.controller.write(ledir, data)
+                r = self.controller.write(ledir, data)
+                if (type(r) == list):
+                    threading.Thread(target=self.gui.drawMem).start()
+                threading.Thread(
+                    target=self.gui.drawUpdateCache(self.id, ledir)).start()
             else:
-                self.controller.read(ledir)
+                r = self.controller.read(ledir)
+                if (type(r) == list):
+                    threading.Thread(target=self.gui.drawMem).start()
+                threading.Thread(
+                    target=self.gui.drawUpdateCache(self.id, ledir)).start()
+
+    def continuosCompute(self):
+        while(self.continuos_Flag):
+            self.genInst()
+            threading.Thread(target=self.gui.drawInst(
+                self.id, self.inst)).start()
+            tinst = self.inst[4:].split(' ')
+            op = tinst[0]
+            if (op == 'CALC'):
+                time.sleep(self.clock)
+            else:
+                ledir = tinst[1]
+                if (op == 'WRITE'):
+                    data = tinst[2]
+                    r = self.controller.write(ledir, data)
+                    if (type(r) == list):
+                        threading.Thread(target=self.gui.drawMem).start()
+                    threading.Thread(
+                        target=self.gui.drawUpdateCache(self.id, ledir)).start()
+                else:
+                    r = self.controller.read(ledir)
+                    if (type(r) == list):
+                        threading.Thread(target=self.gui.drawMem).start()
+                    threading.Thread(
+                        target=self.gui.drawUpdateCache(self.id, ledir)).start()
 
     def manualCompute(self, manual_inst):
         self.inst = manual_inst
+        threading.Thread(target=self.gui.drawInst(self.id, self.inst)).start()
         tinst = self.inst[4:].split(' ')
-        print(tinst)
         op = tinst[0]
         if (op == 'CALC'):
             time.sleep(self.clock)
@@ -73,6 +112,14 @@ class CPU:
             ledir = tinst[1]
             if (op == 'WRITE'):
                 data = tinst[2]
-                self.controller.write(ledir, data)
+                r = self.controller.write(ledir, data)
+                if (type(r) == list):
+                    threading.Thread(target=self.gui.drawMem).start()
+                threading.Thread(
+                    target=self.gui.drawUpdateCache(self.id, ledir)).start()
             else:
-                self.controller.read(ledir)
+                r = self.controller.read(ledir)
+                if (type(r) == list):
+                    threading.Thread(target=self.gui.drawMem).start()
+                threading.Thread(
+                    target=self.gui.drawUpdateCache(self.id, ledir)).start()
