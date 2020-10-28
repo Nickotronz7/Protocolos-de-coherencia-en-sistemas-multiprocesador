@@ -38,13 +38,13 @@ class CPU:
 
     def genInst(self):
         _type = np.random.normal(50.0, 10)/100
-        if (0.33 <= _type < 0.67):
+        if (0.40 <= _type < 0.60):
             # inst calc
             inst = 'P'+str(self.id)+': CALC'
             self.inst = inst
         else:
             memDir = self.genMemDir()
-            if (0 <= _type < 0.33):
+            if (0 <= _type < 0.40):
                 # inst lectura
                 inst = 'P'+str(self.id)+': READ ' + memDir
             else:
@@ -68,16 +68,16 @@ class CPU:
                 if (type(r) == list):
                     threading.Thread(target=self.gui.drawMem).start()
                 threading.Thread(
-                    target=self.gui.drawUpdateCache(self.id, ledir)).start()
+                    target=self.gui.drawUpdateCacheAll).start()
             else:
                 r = self.controller.read(ledir)
                 if (type(r) == list):
                     threading.Thread(target=self.gui.drawMem).start()
                 threading.Thread(
-                    target=self.gui.drawUpdateCache(self.id, ledir)).start()
+                    target=self.gui.drawUpdateCacheAll).start()
 
     def continuosCompute(self):
-        while(self.continuos_Flag):
+        if(self.continuos_Flag):
             self.genInst()
             threading.Thread(target=self.gui.drawInst(
                 self.id, self.inst)).start()
@@ -93,13 +93,13 @@ class CPU:
                     if (type(r) == list):
                         threading.Thread(target=self.gui.drawMem).start()
                     threading.Thread(
-                        target=self.gui.drawUpdateCache(self.id, ledir)).start()
+                        target=self.gui.drawUpdateCacheAll).start()
                 else:
                     r = self.controller.read(ledir)
                     if (type(r) == list):
                         threading.Thread(target=self.gui.drawMem).start()
                     threading.Thread(
-                        target=self.gui.drawUpdateCache(self.id, ledir)).start()
+                        target=self.gui.drawUpdateCacheAll).start()
 
     def manualCompute(self, manual_inst):
         self.inst = manual_inst
@@ -116,10 +116,10 @@ class CPU:
                 if (type(r) == list):
                     threading.Thread(target=self.gui.drawMem).start()
                 threading.Thread(
-                    target=self.gui.drawUpdateCache(self.id, ledir)).start()
+                    target=self.gui.drawUpdateCacheAll).start()
             else:
                 r = self.controller.read(ledir)
                 if (type(r) == list):
                     threading.Thread(target=self.gui.drawMem).start()
                 threading.Thread(
-                    target=self.gui.drawUpdateCache(self.id, ledir)).start()
+                    target=self.gui.drawUpdateCacheAll).start()

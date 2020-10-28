@@ -11,7 +11,8 @@ class MEMORY:
         self.clock = initClock
 
     def wall(self):
-        time.sleep(0.0001*self.clock)
+        # time.sleep(5*self.clock)
+        print("Memoria super Rapida")
 
     def writeData(self, ledir, data):
         block = int('0b'+ledir[:2], 2)

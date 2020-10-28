@@ -9,7 +9,7 @@ class CONTROLLER:
         result = self.cache.getData(ledir)
         if (result[0] != 'ReadMiss'):  # HIT
             self.cache.setData(ledir, data)
-            self.invalidate(ledir)
+            self.bus.invalidateAlert(ledir)
             self.cache.set_EC(ledir, 'M')
             return data
 
@@ -17,14 +17,14 @@ class CONTROLLER:
             newEC = self.cache.get_EC(ledir)
             if (newEC == 'I' or newEC == 'S'):
                 self.cache.justSetData(ledir, data)
-                self.invalidate(ledir)
+                self.bus.invalidateAlert(ledir)
                 self.cache.set_EC(ledir, 'M')
                 return data
 
             else:  # verificar todo los estados
                 self.bus.WB(self.cache.get_ledir(ledir), self.cache.getDataWB(ledir))
                 self.cache.justSetData(ledir, data)
-                self.invalidate(ledir)
+                self.bus.invalidateAlert(ledir)
                 self.cache.set_EC(ledir, 'M')
                 return [data]
 

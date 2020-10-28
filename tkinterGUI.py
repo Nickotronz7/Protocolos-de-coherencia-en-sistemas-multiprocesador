@@ -92,7 +92,6 @@ class Application(tk.Frame):
         self.drawInitCache()
 
     def create_widgets(self):
-
         # Separadores
         # Verticales
         self.vs1 = ttk.Separator(self.controlFrame, orient=tk.VERTICAL)
@@ -513,6 +512,10 @@ class Application(tk.Frame):
             self.masterButton.config(state=tk.NORMAL)
         else:
             self.masterButton.config(state=tk.DISABLED)
+            self.p1.set_continuos_Flag(False)
+            self.p2.set_continuos_Flag(False)
+            self.p3.set_continuos_Flag(False)
+            self.p4.set_continuos_Flag(False)
 
     def doitButton_Clicked(self):
         inst = self.instVar.get()
@@ -538,7 +541,7 @@ class Application(tk.Frame):
         else:
             threading.Thread(target=self.p4.manualCompute(manual_inst)).start()
 
-    def masterButton_Clicked(self):
+    def masterButton_Clicked(self): 
         self.masterButton.config(state=tk.DISABLED)
         threading.Thread(target=self.programMainLoop).start()
 
@@ -604,6 +607,10 @@ class Application(tk.Frame):
 
     def initiButton_Clicked(self):
         self.runnig = True
+        self.p1.set_continuos_Flag(True)
+        self.p2.set_continuos_Flag(True)
+        self.p3.set_continuos_Flag(True)
+        self.p4.set_continuos_Flag(True)
         self.initButton.config(state=tk.DISABLED)
         self.resetButton.config(state=tk.DISABLED)
         self.resetButton.config(state=tk.DISABLED)
@@ -644,6 +651,10 @@ class Application(tk.Frame):
         threading.Thread(target=self.programMainLoop).start()
         self.continueButton.config(state=tk.DISABLED)
         self.pauseButton.config(state=tk.NORMAL)
+        self.p1.set_continuos_Flag(True)
+        self.p2.set_continuos_Flag(True)
+        self.p3.set_continuos_Flag(True)
+        self.p4.set_continuos_Flag(True)
 
     def step(self):
         proc1_tred = threading.Thread(
@@ -673,7 +684,29 @@ class Application(tk.Frame):
         while (self.checkMain_value):
             if (self.runnig):
                 if (self.appMode.get() == 0):
-                    print('picha se mama con el modo continuo')
+                    infiTreds = []
+                    n = 100
+                    while(n > 0):
+                        proc1_tred = threading.Thread(
+                            target=self.p1.continuosCompute())
+                        infiTreds.append(proc1_tred)
+                        proc1_tred.start()
+
+                        proc2_tred = threading.Thread(
+                            target=self.p2.continuosCompute())
+                        infiTreds.append(proc2_tred)
+                        proc2_tred.start()
+
+                        proc3_tred = threading.Thread(
+                            target=self.p3.continuosCompute())
+                        infiTreds.append(proc3_tred)
+                        proc3_tred.start()
+
+                        proc4_tred = threading.Thread(
+                            target=self.p4.continuosCompute())
+                        infiTreds.append(proc4_tred)
+                        proc4_tred.start()
+                    self.running = False
                 elif (self.appMode.get() == 2):
                     n = int(self.ciclosSpin.get())
                     treds = []
@@ -781,127 +814,6 @@ class Application(tk.Frame):
         self.memBlock1111.insert("1.0", memData[3][3])
         self.memBlock1111.config(state=tk.DISABLED)
 
-    def drawUpdateCache(self, proc, ledir):
-        cSet = int(ledir[-1])  # 111_1_
-        block = int(ledir[1])  # 1_1_11
-        if (proc == 1):
-            coer = self.p1.controller.cache.get_EC(ledir)
-            cDir = self.p1.controller.cache.cdata[cSet][block].getDir()
-            cDato = self.p1.controller.cache.cdata[cSet][block].getData()
-            cStri = 'Estado: '+coer+'\n'+'Direccion: '+cDir+'\n'+'Dato: '+cDato
-            cStri += '\n'
-        elif (proc == 2):
-            coer = self.p2.controller.cache.get_EC(ledir)
-            cDir = self.p2.controller.cache.cdata[cSet][block].getDir()
-            cDato = self.p2.controller.cache.cdata[cSet][block].getData()
-            cStri = 'Estado: '+coer+'\n'+'Direccion: '+cDir+'\n'+'Dato: '+cDato
-            cStri += '\n'
-        elif (proc == 3):
-            coer = self.p3.controller.cache.get_EC(ledir)
-            cDir = self.p3.controller.cache.cdata[cSet][block].getDir()
-            cDato = self.p3.controller.cache.cdata[cSet][block].getData()
-            cStri = 'Estado: '+coer+'\n'+'Direccion: '+cDir+'\n'+'Dato: '+cDato
-            cStri += '\n'
-        else:
-            coer = self.p4.controller.cache.get_EC(ledir)
-            cDir = self.p4.controller.cache.cdata[cSet][block].getDir()
-            cDato = self.p4.controller.cache.cdata[cSet][block].getData()
-            cStri = 'Estado: '+coer+'\n'+'Direccion: '+cDir+'\n'+'Dato: '+cDato
-            cStri += '\n'
-
-        if (proc == 1):
-            if (cSet):  # 1_
-                if (block):  # 11
-                    self.p1bock4.config(state=tk.NORMAL)
-                    self.p1bock4.delete("1.0", tk.END)
-                    self.p1bock4.insert(tk.END, cStri)
-                    self.p1bock4.config(state=tk.NORMAL)
-                else:  # 10
-                    self.p1bock3.config(state=tk.NORMAL)
-                    self.p1bock3.delete("1.0", tk.END)
-                    self.p1bock3.insert(tk.END, cStri)
-                    self.p1bock3.config(state=tk.NORMAL)
-            else:  # 0_
-                if (block):  # 01
-                    self.p1bock2.config(state=tk.NORMAL)
-                    self.p1bock2.delete("1.0", tk.END)
-                    self.p1bock2.insert(tk.END, cStri)
-                    self.p1bock2.config(state=tk.NORMAL)
-                else:  # 00
-                    self.p1bock1.config(state=tk.NORMAL)
-                    self.p1bock1.delete("1.0", tk.END)
-                    self.p1bock1.insert(tk.END, cStri)
-                    self.p1bock1.config(state=tk.NORMAL)
-        elif (proc == 2):
-            if (cSet):  # 1_
-                if (block):  # 11
-                    self.p2bock4.config(state=tk.NORMAL)
-                    self.p2bock4.delete("1.0", tk.END)
-                    self.p2bock4.insert(tk.END, cStri)
-                    self.p2bock4.config(state=tk.NORMAL)
-                else:  # 10
-                    self.p2bock3.config(state=tk.NORMAL)
-                    self.p2bock3.delete("1.0", tk.END)
-                    self.p2bock3.insert(tk.END, cStri)
-                    self.p2bock3.config(state=tk.NORMAL)
-            else:  # 0_
-                if (block):  # 01
-                    self.p2bock2.config(state=tk.NORMAL)
-                    self.p2bock2.delete("1.0", tk.END)
-                    self.p2bock2.insert(tk.END, cStri)
-                    self.p2bock2.config(state=tk.NORMAL)
-                else:  # 00
-                    self.p2bock1.config(state=tk.NORMAL)
-                    self.p2bock1.delete("1.0", tk.END)
-                    self.p2bock1.insert(tk.END, cStri)
-                    self.p2bock1.config(state=tk.NORMAL)
-        elif (proc == 3):
-            if (cSet):  # 1_
-                if (block):  # 11
-                    self.p3bock4.config(state=tk.NORMAL)
-                    self.p3bock4.delete("1.0", tk.END)
-                    self.p3bock4.insert(tk.END, cStri)
-                    self.p3bock4.config(state=tk.NORMAL)
-                else:  # 10
-                    self.p3bock3.config(state=tk.NORMAL)
-                    self.p3bock3.delete("1.0", tk.END)
-                    self.p3bock3.insert(tk.END, cStri)
-                    self.p3bock3.config(state=tk.NORMAL)
-            else:  # 0_
-                if (block):  # 01
-                    self.p3bock2.config(state=tk.NORMAL)
-                    self.p3bock2.delete("1.0", tk.END)
-                    self.p3bock2.insert(tk.END, cStri)
-                    self.p3bock2.config(state=tk.NORMAL)
-                else:  # 00
-                    self.p3bock1.config(state=tk.NORMAL)
-                    self.p3bock1.delete("1.0", tk.END)
-                    self.p3bock1.insert(tk.END, cStri)
-                    self.p3bock1.config(state=tk.NORMAL)
-        else:
-            if (cSet):  # 1_
-                if (block):  # 11
-                    self.p4bock4.config(state=tk.NORMAL)
-                    self.p4bock4.delete("1.0", tk.END)
-                    self.p4bock4.insert(tk.END, cStri)
-                    self.p4bock4.config(state=tk.NORMAL)
-                else:  # 10
-                    self.p4bock3.config(state=tk.NORMAL)
-                    self.p4bock3.delete("1.0", tk.END)
-                    self.p4bock3.insert(tk.END, cStri)
-                    self.p4bock3.config(state=tk.NORMAL)
-            else:  # 0_
-                if (block):  # 01
-                    self.p4bock2.config(state=tk.NORMAL)
-                    self.p4bock2.delete("1.0", tk.END)
-                    self.p4bock2.insert(tk.END, cStri)
-                    self.p4bock2.config(state=tk.NORMAL)
-                else:  # 00
-                    self.p4bock1.config(state=tk.NORMAL)
-                    self.p4bock1.delete("1.0", tk.END)
-                    self.p4bock1.insert(tk.END, cStri)
-                    self.p4bock1.config(state=tk.NORMAL)
-
     def drawInst(self, proc, inst):
         if (proc == 1):
             self.instProc1.config(state=tk.NORMAL)
@@ -1001,3 +913,133 @@ class Application(tk.Frame):
         self.p4bock4.delete("1.0", tk.END)
         self.p4bock4.insert(tk.END, cStri)
         self.p4bock4.config(state=tk.NORMAL)
+
+    def drawUpdateCacheAll(self):
+        cSet = 0
+        block = 0
+        for cSet in range(2):
+            for block in range(2):
+                coer = self.p1.controller.cache.cdata[cSet][block].getCoer()
+                cDir = self.p1.controller.cache.cdata[cSet][block].getDir()
+                cDato = self.p1.controller.cache.cdata[cSet][block].getData(
+                )
+                cStri = 'Estado: '+coer+'\n'+'Direccion: '+cDir+'\n'+'Dato: '+cDato
+                cStri += '\n'
+                if (cSet):  # 1_
+                    if (block):  # 11
+                        self.p1bock4.config(state=tk.NORMAL)
+                        self.p1bock4.delete("1.0", tk.END)
+                        self.p1bock4.insert(tk.END, cStri)
+                        self.p1bock4.config(state=tk.NORMAL)
+                    else:  # 10
+                        self.p1bock3.config(state=tk.NORMAL)
+                        self.p1bock3.delete("1.0", tk.END)
+                        self.p1bock3.insert(tk.END, cStri)
+                        self.p1bock3.config(state=tk.NORMAL)
+                else:  # 0_
+                    if (block):  # 01
+                        self.p1bock2.config(state=tk.NORMAL)
+                        self.p1bock2.delete("1.0", tk.END)
+                        self.p1bock2.insert(tk.END, cStri)
+                        self.p1bock2.config(state=tk.NORMAL)
+                    else:  # 00
+                        self.p1bock1.config(state=tk.NORMAL)
+                        self.p1bock1.delete("1.0", tk.END)
+                        self.p1bock1.insert(tk.END, cStri)
+                        self.p1bock1.config(state=tk.NORMAL)
+
+        cSet = 0
+        block = 0
+        for cSet in range(2):
+            for block in range(2):
+                coer = self.p2.controller.cache.cdata[cSet][block].getCoer()
+                cDir = self.p2.controller.cache.cdata[cSet][block].getDir()
+                cDato = self.p2.controller.cache.cdata[cSet][block].getData()
+                cStri = 'Estado: '+coer+'\n'+'Direccion: '+cDir+'\n'+'Dato: '+cDato
+                cStri += '\n'
+                if (cSet):  # 1_
+                    if (block):  # 11
+                        self.p2bock4.config(state=tk.NORMAL)
+                        self.p2bock4.delete("1.0", tk.END)
+                        self.p2bock4.insert(tk.END, cStri)
+                        self.p2bock4.config(state=tk.NORMAL)
+                    else:  # 10
+                        self.p2bock3.config(state=tk.NORMAL)
+                        self.p2bock3.delete("1.0", tk.END)
+                        self.p2bock3.insert(tk.END, cStri)
+                        self.p2bock3.config(state=tk.NORMAL)
+                else:  # 0_
+                    if (block):  # 01
+                        self.p2bock2.config(state=tk.NORMAL)
+                        self.p2bock2.delete("1.0", tk.END)
+                        self.p2bock2.insert(tk.END, cStri)
+                        self.p2bock2.config(state=tk.NORMAL)
+                    else:  # 00
+                        self.p2bock1.config(state=tk.NORMAL)
+                        self.p2bock1.delete("1.0", tk.END)
+                        self.p2bock1.insert(tk.END, cStri)
+                        self.p2bock1.config(state=tk.NORMAL)
+
+        cSet = 0
+        block = 0
+        for cSet in range(2):
+            for block in range(2):
+                coer = self.p3.controller.cache.cdata[cSet][block].getCoer()
+                cDir = self.p3.controller.cache.cdata[cSet][block].getDir()
+                cDato = self.p3.controller.cache.cdata[cSet][block].getData()
+                cStri = 'Estado: '+coer+'\n'+'Direccion: '+cDir+'\n'+'Dato: '+cDato
+                cStri += '\n'
+                if (cSet):  # 1_
+                    if (block):  # 11
+                        self.p3bock4.config(state=tk.NORMAL)
+                        self.p3bock4.delete("1.0", tk.END)
+                        self.p3bock4.insert(tk.END, cStri)
+                        self.p3bock4.config(state=tk.NORMAL)
+                    else:  # 10
+                        self.p3bock3.config(state=tk.NORMAL)
+                        self.p3bock3.delete("1.0", tk.END)
+                        self.p3bock3.insert(tk.END, cStri)
+                        self.p3bock3.config(state=tk.NORMAL)
+                else:  # 0_
+                    if (block):  # 01
+                        self.p3bock2.config(state=tk.NORMAL)
+                        self.p3bock2.delete("1.0", tk.END)
+                        self.p3bock2.insert(tk.END, cStri)
+                        self.p3bock2.config(state=tk.NORMAL)
+                    else:  # 00
+                        self.p3bock1.config(state=tk.NORMAL)
+                        self.p3bock1.delete("1.0", tk.END)
+                        self.p3bock1.insert(tk.END, cStri)
+                        self.p3bock1.config(state=tk.NORMAL)
+
+        cSet = 0
+        block = 0
+        for cSet in range(2):
+            for block in range(2):
+                coer = self.p4.controller.cache.cdata[cSet][block].getCoer()
+                cDir = self.p4.controller.cache.cdata[cSet][block].getDir()
+                cDato = self.p4.controller.cache.cdata[cSet][block].getData()
+                cStri = 'Estado: '+coer+'\n'+'Direccion: '+cDir+'\n'+'Dato: '+cDato
+                cStri += '\n'
+                if (cSet):  # 1_
+                    if (block):  # 11
+                        self.p4bock4.config(state=tk.NORMAL)
+                        self.p4bock4.delete("1.0", tk.END)
+                        self.p4bock4.insert(tk.END, cStri)
+                        self.p4bock4.config(state=tk.NORMAL)
+                    else:  # 10
+                        self.p4bock3.config(state=tk.NORMAL)
+                        self.p4bock3.delete("1.0", tk.END)
+                        self.p4bock3.insert(tk.END, cStri)
+                        self.p4bock3.config(state=tk.NORMAL)
+                else:  # 0_
+                    if (block):  # 01
+                        self.p4bock2.config(state=tk.NORMAL)
+                        self.p4bock2.delete("1.0", tk.END)
+                        self.p4bock2.insert(tk.END, cStri)
+                        self.p4bock2.config(state=tk.NORMAL)
+                    else:  # 00
+                        self.p4bock1.config(state=tk.NORMAL)
+                        self.p4bock1.delete("1.0", tk.END)
+                        self.p4bock1.insert(tk.END, cStri)
+                        self.p4bock1.config(state=tk.NORMAL)

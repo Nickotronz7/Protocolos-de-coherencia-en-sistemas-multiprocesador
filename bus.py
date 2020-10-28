@@ -4,6 +4,11 @@ class BUS:
         self.mem = initMem
         self.cachesController = set()
 
+    def invalidateAlert(self, ledir):
+        for cacheController in self.cachesController:
+            cacheController.invalidate(ledir)
+
+
     def addController(self, newCacheController):
         self.cachesController.add(newCacheController)
 
